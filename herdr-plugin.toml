@@ -1,0 +1,35 @@
+id = "resilient-software.agent-activity"
+name = "Agent Activity"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Shows subagents, background tasks, monitors, and scheduled checks of Claude Code and Codex agents in the sidebar, and publishes them as pane and workspace tokens."
+platforms = ["macos", "linux"]
+
+[[startup]]
+command = ["node", "bin/cli.mjs", "startup"]
+
+[[actions]]
+id = "install"
+title = "Agent Activity: install hooks and sidebar layout"
+contexts = ["workspace"]
+command = ["node", "bin/cli.mjs", "install"]
+
+[[actions]]
+id = "uninstall"
+title = "Agent Activity: remove hooks and sidebar layout"
+contexts = ["workspace"]
+command = ["node", "bin/cli.mjs", "uninstall"]
+
+[[actions]]
+id = "doctor"
+title = "Agent Activity: check setup"
+contexts = ["workspace"]
+command = ["node", "bin/cli.mjs", "doctor"]
+
+[[panes]]
+id = "doctor"
+title = "Agent Activity doctor"
+placement = "popup"
+width = "80%"
+height = "60%"
+command = ["sh", "-c", "node bin/cli.mjs doctor; printf '\\npress enter to close'; read _"]

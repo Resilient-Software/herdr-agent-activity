@@ -1,0 +1,14 @@
+{
+  "name": "herdr-agent-activity",
+  "version": "0.1.0",
+  "description": "Herdr plugin: subagent, background task, monitor and scheduled-check activity for Claude Code and Codex agents",
+  "license": "MIT",
+  "author": "Resilient Software",
+  "repository": "github:Resilient-Software/herdr-agent-activity",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
