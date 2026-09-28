@@ -229,7 +229,7 @@ async function startup() {
 
 async function doctor() {
   const record = readJson(recordPath());
-  const lines = [`plugin root: ${ROOT}`, `node: ${process.execPath}`, `installed: ${record ? record.installedAt : "no"}`];
+  const lines = [`plugin root: ${ROOT}`, `node: ${stableNode()}`, `installed: ${record ? record.installedAt : "no"}`];
   const shim = shimPath();
   lines.push(`shim: ${fs.existsSync(shim) ? shim : "missing"}`);
   for (const [agent, dirs] of [
