@@ -68,7 +68,8 @@ herdr plugin pane open --plugin resilient-software.agent-activity --entrypoint d
 
 `doctor` lists each agent home and its hook count, the sidebar status, the
 publisher, the panes with activity, and the last lines of the plugin log
-(`activity.log` in the plugin's state directory).
+(`activity.log` in the plugin's state directory, usually
+`~/.local/state/herdr/plugins/resilient-software.agent-activity/`).
 
 ### Uninstall
 
@@ -136,8 +137,11 @@ Hooks run asynchronously and only for relevant tools, so they add no latency
 to your agent. State lives in the plugin's state directory, one small JSON
 file per active session.
 
-Codex exposes fewer hooks: subagents are tracked; background shells and
-schedules are not visible to Codex hooks today.
+Codex exposes fewer hooks: subagents are tracked (`SubagentStart` /
+`SubagentStop`); background shells and schedules are not visible to Codex hooks
+today. If you run Codex through its shared app-server daemon, hooks run in the
+daemon's environment and report to whichever pane started it; launch Codex
+with `--no-daemon` for per-pane activity.
 
 The publisher (started by the plugin's startup hook) listens to Herdr events,
 clears activity when an agent leaves its pane, advances cron times, and writes
@@ -149,7 +153,7 @@ the per-workspace sum used by space rows.
 npm test
 herdr plugin link "$PWD"
 herdr plugin action invoke resilient-software.agent-activity.install
-tail -f "$(herdr plugin config-dir resilient-software.agent-activity | sed 's#/config/#/state/#')/activity.log"
+tail -f ~/.local/state/herdr/plugins/resilient-software.agent-activity/activity.log
 ```
 
 ## License
