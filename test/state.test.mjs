@@ -139,3 +139,29 @@ test("Codex-style Stop without snapshots leaves state alone", () => {
   const state = run([{ hook_event_name: "SubagentStart", agent_id: "t1", agent_type: "worker" }, { hook_event_name: "Stop" }], emptyState("codex"));
   assert.deepEqual(Object.keys(state.subagents), ["t1"]);
 });
+
+test("a one-shot cron with a daily-looking pattern fires once, then drops out", async () => {
+  const { countsFromState } = await import("../lib/tokens.mjs");
+  const at = (h, m, day = 28) => new Date(2026, 8, day, h, m).getTime();
+  const created = reduce(
+    emptyState("claude"),
+    {
+      hook_event_name: "PostToolUse",
+      tool_name: "CronCreate",
+      tool_input: { cron: "50 12 * * *", prompt: "check again", recurring: false },
+      tool_response: { id: "once" },
+    },
+    at(12, 33),
+  );
+  assert.equal(countsFromState(created, at(12, 40)).nextAt, at(12, 50));
+  // After it fires the pattern would match again tomorrow; it must not.
+  assert.equal(countsFromState(created, at(12, 51)).nextAt, null);
+  // A later snapshot that still lists it (before Claude deletes it) keeps the original time.
+  const snapshot = reduce(
+    created,
+    { hook_event_name: "Stop", session_crons: [{ id: "once", schedule: "50 12 * * *", recurring: false, prompt: "check again" }] },
+    at(12, 51),
+  );
+  assert.equal(snapshot.crons.once.onceAt, at(12, 50));
+  assert.equal(countsFromState(snapshot, at(12, 51)).nextAt, null);
+});
